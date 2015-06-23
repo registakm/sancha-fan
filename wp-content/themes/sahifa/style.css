@@ -3121,12 +3121,10 @@ p.post-meta span {
     color: #fff !important;
     padding: 10px 0px;
     width: 100%;
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;
-    vertical-align: middle;
-    text-align: center;
     cursor: pointer;
+    -webkit-border-radius: 2px;
+    -moz-border-radius: 2px;
+    border-radius: 2px;
 }
 
 /**
@@ -3156,7 +3154,7 @@ p.post-meta span {
 .entry h6 {
     margin-top: 25px;
     margin-bottom: 15px;
-    line-height: 1em;
+    line-height: 1.2em;
     font-family: 'Noto Sans Japanese', 'Hiragino Kaku Gothic ProN', arial, sans-serif;
     font-weight: normal;
 }
