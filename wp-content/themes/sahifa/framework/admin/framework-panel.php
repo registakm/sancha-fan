@@ -1240,6 +1240,17 @@ $save='
 				?>
 			</div>
 
+			<div class="tiepanel-item">
+
+				<h3><?php _e( 'Facebook Post Like Box', 'tie' ) ?></h3>
+				<?php
+					tie_options(
+						array(	"name"	=> __( 'Custom Share Button', 'tie' ),
+								"id"	=> "facebook_post_like",
+								"type"	=> "checkbox"));
+				?>
+			</div>
+
 
 			<div class="tiepanel-item">
 

@@ -45,6 +45,7 @@ if( get_option('tie_active') ) {
 			"tie_custom_share_T",
 			"tie_custom_share_F",
 			"tie_custom_share_L",
+			"tie_facebook_post_like",
 			"tie_related",
 			"tie_related_number",
 			"tie_related_query",

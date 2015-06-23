@@ -391,7 +391,9 @@ $default_data = Array(
 		"custom_share_T"			=> 		true,
 		"custom_share_F"			=> 		true,
 		"custom_share_L"			=> 		true,
-		
+
+		"facebook_post_like"		=> 		true,
+
 		'related' 					=> 		true,
 		'related_number' 			=> 		'3',
 		'related_number_full' 		=> 		'4',
