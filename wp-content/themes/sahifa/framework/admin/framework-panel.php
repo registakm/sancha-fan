@@ -8,25 +8,25 @@ function tie_clean_options(&$value) {
 function tie_clean_imported_options(&$value) {
   $value = htmlspecialchars_decode( $value );
 }
-	
-	
+
+
 /*-----------------------------------------------------------------------------------*/
 # Options Array
 /*-----------------------------------------------------------------------------------*/
 $array_options = array( "tie_options" );
-	
-	
+
+
 /*-----------------------------------------------------------------------------------*/
 # Save Theme Settings
-/*-----------------------------------------------------------------------------------*/	
+/*-----------------------------------------------------------------------------------*/
 function tie_save_settings ( $data , $refresh = 0 ) {
 	global $array_options ;
-		
+
 	foreach( $array_options as $option ){
 		if( isset( $data[$option] )){
 			array_walk_recursive( $data[$option] , 'tie_clean_options');
 			update_option( $option ,  $data[$option] );
-			
+
 			if(  function_exists('icl_register_string') && $option == 'tie_home_cats'){
 				foreach( $data[$option] as $item ){
 					if( !empty($item['boxid']) )
@@ -39,20 +39,20 @@ function tie_save_settings ( $data , $refresh = 0 ) {
 		}
 		elseif( !isset( $data[$option] ) && $option != 'tie_options' ){
 			delete_option($option);
-		}		
+		}
 	}
 
 	if( $refresh == 2 )  die('2');
 	elseif( $refresh == 1 )	die('1');
 }
-	
-	
+
+
 /*-----------------------------------------------------------------------------------*/
 # Save Options
 /*-----------------------------------------------------------------------------------*/
 add_action('wp_ajax_test_theme_data_save', 'tie_save_ajax');
 function tie_save_ajax() {
-	
+
 	check_ajax_referer('test-theme-data', 'security');
 	$data = $_POST;
 	$refresh = 1;
@@ -62,7 +62,7 @@ function tie_save_ajax() {
 		$data = unserialize(base64_decode( $data['tie_import'] ));
 		array_walk_recursive( $data , 'tie_clean_imported_options');
 	}
-	
+
 	tie_save_settings ($data , $refresh );
 }
 
@@ -70,7 +70,7 @@ function tie_save_ajax() {
 /*-----------------------------------------------------------------------------------*/
 # Add Panel Page
 /*-----------------------------------------------------------------------------------*/
-add_action('admin_menu', 'tie_add_admin'); 
+add_action('admin_menu', 'tie_add_admin');
 function tie_add_admin() {
 
 	$current_page = isset( $_REQUEST['page'] ) ? $_REQUEST['page'] : '';
@@ -86,14 +86,14 @@ function tie_add_admin() {
 	function tie_get_support(){
 		echo "<script type='text/javascript'>window.location='http://support.tielabs.com/';</script>";
 	}
-	
+
 	function redirect_docs(){
 		echo "<script type='text/javascript'>window.location='".DOCUMENTATION_URL."';</script>";
 	}
 
 	add_action( 'admin_head-'. $theme_page, 'tie_admin_head' );
 	function tie_admin_head(){
-	
+
 	?>
 	<script type="text/javascript">
 		var emptyImg = '<?php echo get_template_directory_uri(); ?>/framework/admin/images/empty.png';
@@ -102,18 +102,18 @@ function tie_add_admin() {
 		  jQuery('.on-of').checkbox({empty: emptyImg});
 
 		  jQuery('form#tie_form').submit(function() {
-		  
+
 		  	/* Disable Empty options */
 			  jQuery('form#tie_form input, form#tie_form textarea, form#tie_form select').each(function() {
 					if (!jQuery(this).val()) jQuery(this).attr("disabled", true );
 			  });
 			   jQuery('#typography_test-item input, #typography_test-item select').attr("disabled", true );
-			   
+
 			  var data = jQuery(this).serialize();
-			  
+
 			/* Enable Empty options */
 			  jQuery('form#tie_form input:disabled, form#tie_form textarea:disabled, form#tie_form select:disabled').attr("disabled", false );
-			  
+
 			  jQuery.post(ajaxurl, data, function(response) {
 				  if(response == 1) {
 					  jQuery('#save-alert').addClass('save-done');
@@ -129,16 +129,16 @@ function tie_add_admin() {
 			  });
 			  return false;
 		  });
-		  
+
 		});
-		
+
 		function fade_message() {
 			jQuery('#save-alert').fadeOut(function() {
 				jQuery('#save-alert').removeClass('save-done');
 			});
 			clearTimeout(t);
 		}
-				
+
 		jQuery(function() {
 			jQuery( "#customList"   ).sortable({placeholder: "ui-state-highlight"});
 		});
@@ -163,33 +163,33 @@ function tie_add_admin() {
 function tie_options ( $value ){
 	$data = false;
 	if( tie_get_option( $value['id'] ) ) $data = tie_get_option( $value['id'] );
-	
+
 	tie_options_build ( $value, 'tie_options['.$value["id"].']', $data );
 }
 
 /*-----------------------------------------------------------------------------------*/
 # The Panel UI
 /*-----------------------------------------------------------------------------------*/
-function tie_panel_options() { 
-	
+function tie_panel_options() {
+
 	//Categories
 	$categories_obj = get_categories('hide_empty=0');
 	$categories = array();
 	foreach ($categories_obj as $pn_cat) {
 		$categories[$pn_cat->cat_ID] = $pn_cat->cat_name;
 	}
-		
+
 	$checked = 'checked="checked"';
 
 $save='
 	<div class="mpanel-submit">
 		<input type="hidden" name="action" value="test_theme_data_save" />
         <input type="hidden" name="security" value="'. wp_create_nonce("test-theme-data").'" />
-		<input name="save" class="mpanel-save button button-primary button-large" type="submit" value="'.__( "Save Changes", 'tie' ).'" />    
-	</div>'; 
+		<input name="save" class="mpanel-save button button-primary button-large" type="submit" value="'.__( "Save Changes", 'tie' ).'" />
+	</div>';
 ?>
-		
-		
+
+
 <div id="save-alert"></div>
 
 <div class="mo-panel">
@@ -214,8 +214,8 @@ $save='
 		</ul>
 		<div class="clear"></div>
 	</div> <!-- .mo-panel-tabs -->
-	
-	
+
+
 	<div class="mo-panel-content">
 	<form action="/" name="tie_form" id="tie_form">
 		<div id="tab1" class="tabs-wrap">
@@ -231,7 +231,7 @@ $save='
 				?>
 			</div>
 			<?php endif; ?>
-			
+
 			<div class="tiepanel-item">
 				<h3><?php _e( 'Theme Layout', 'tie' ) ?></h3>
 				<div class="option-item">
@@ -254,8 +254,8 @@ $save='
 					</ul>
 				</div>
 			</div>
-			
-			
+
+
 			<div class="tiepanel-item">
 				<h3><?php _e( 'Custom Favicon', 'tie' ) ?></h3>
 				<?php
@@ -264,7 +264,7 @@ $save='
 								"id"	=> "favicon",
 								"type"	=> "upload"));
 				?>
-			</div>	
+			</div>
 			<div class="tiepanel-item">
 				<h3><?php _e( 'Custom Gravatar', 'tie' ) ?></h3>
 				<?php
@@ -273,7 +273,7 @@ $save='
 								"id"	=> "gravatar",
 								"type"	=> "upload"));
 				?>
-			</div>	
+			</div>
 			<div class="tiepanel-item">
 				<h3><?php _e( 'Apple Icons', 'tie' ) ?></h3>
 				<?php
@@ -281,29 +281,29 @@ $save='
 						array(	"name"			=> __( 'Apple iPhone Icon', 'tie' ),
 								"id"			=> "apple_iphone",
 								"type"			=> "upload",
-								"extra_text"	=> __( 'Icon for Apple iPhone (57px x 57px)', 'tie' ) )); 			
+								"extra_text"	=> __( 'Icon for Apple iPhone (57px x 57px)', 'tie' ) ));
 
 					tie_options(
 						array(	"name"			=> __( 'Apple iPhone Retina Icon', 'tie' ),
 								"id"			=> "apple_iphone_retina",
 								"type"			=> "upload",
-								"extra_text"	=> __( 'Icon for Apple iPhone Retina Version (120px x 120px)', 'tie' ) )); 			
+								"extra_text"	=> __( 'Icon for Apple iPhone Retina Version (120px x 120px)', 'tie' ) ));
 
 					tie_options(
 						array(	"name"			=> __( 'Apple iPad Icon', 'tie' ),
 								"id"			=> "apple_iPad",
 								"type"			=> "upload",
-								"extra_text"	=> __( 'Icon for Apple iPhone (72px x 72px)', 'tie' ) )); 			
+								"extra_text"	=> __( 'Icon for Apple iPhone (72px x 72px)', 'tie' ) ));
 
 					tie_options(
 						array(	"name"			=> __( 'Apple iPad Retina Icon', 'tie' ),
 								"id"			=> "apple_iPad_retina",
 								"type"			=> "upload",
-								"extra_text"	=> __( 'Icon for Apple iPad Retina Version (144px x 144px)', 'tie' ) )); 			
+								"extra_text"	=> __( 'Icon for Apple iPad Retina Version (144px x 144px)', 'tie' ) ));
 
 				?>
-			</div>	
-			
+			</div>
+
 			<div class="tiepanel-item">
 				<h3><?php _e( 'Time format', 'tie' ) ?></h3>
 				<?php
@@ -314,24 +314,24 @@ $save='
 								"options"	=> array(	"traditional"	=> __( 'Traditional', 'tie' ) ,
 														"modern"		=> __( 'Time Ago Format', 'tie' ),
 														"none"			=> __( 'Disable all', 'tie' ) )));
-				?>									
+				?>
 			</div>
 
 			<div class="tiepanel-item">
 				<h3><?php _e( 'Lightbox Settings', 'tie' ) ?></h3>
-				<?php																
+				<?php
 					tie_options(
 						array(	"name"			=> __( 'Enable Lightbox Automatically', 'tie' ),
 								"extra_text"	=> __( 'Enable Lightbox automatically for all images linked to an image file in the post content area', 'tie' ),
 								"id"			=> "lightbox_all",
-								"type"			=> "checkbox"));	
-								
+								"type"			=> "checkbox"));
+
 					tie_options(
 						array(	"name"			=> __( 'Enable Lightbox for WordPress Galleries', 'tie' ),
 								"extra_text"	=> __( 'Enable Lightbox automatically for all images added via [gallery] shortcode in the content area', 'tie' ),
 								"id"			=> "lightbox_gallery",
 								"type"			=> "checkbox"));
-								
+
 					tie_options(
 						array(	"name"			=> __( 'Lightbox Skin', 'tie' ),
 								"id"			=> "lightbox_skin",
@@ -343,59 +343,59 @@ $save='
 													'metro-black'	=> 'metro-black',
 													'metro-white'	=> 'metro-white',
 													'mac'			=> 'mac')));
-								
+
 					tie_options(
 						array( 	"name"			=> __( 'Lightbox Thumbnail Position', 'tie' ),
 								"id"			=> "lightbox_thumbs",
 								"type"			=> "radio",
 								"options"		=> array(	"vertical"		=> __( 'Vertical', 'tie' ) ,
 															"horizontal"	=> __( 'Horizontal', 'tie' ) )));
-													
+
 					tie_options(
 						array(	"name"			=> __( 'Show Lightbox Arrows', 'tie' ),
 								"id"			=> "lightbox_arrows",
-								"type" 			=> "checkbox"));	
-				?>									
-			</div>	
-			
+								"type" 			=> "checkbox"));
+				?>
+			</div>
 
-				
+
+
 			<div class="tiepanel-item">
 				<h3><?php _e( 'Breadcrumbs Settings', 'tie' ) ?></h3>
 				<?php
 					tie_options(
 						array(	"name"	=> __( 'Breadcrumbs', 'tie' ),
 								"id"	=> "breadcrumbs",
-								"type"	=> "checkbox")); 
-					
+								"type"	=> "checkbox"));
+
 					tie_options(
 						array(	"name"	=> __( 'Breadcrumbs Delimiter', 'tie' ),
 								"id"	=> "breadcrumbs_delimiter",
 								"type"	=> "short-text"));
 				?>
 			</div>
-						
+
 			<div class="tiepanel-item">
 				<h3><?php _e( 'Header Code', 'tie' ) ?></h3>
 				<div class="option-item">
 					<small><?php _e( 'The following code will add to the &lt;head&gt; tag. Useful if you need to add additional codes such as CSS or JS.', 'tie' ) ?></small>
-					<textarea id="header_code" name="tie_options[header_code]" style="width:100%" rows="7"><?php echo htmlspecialchars_decode(tie_get_option('header_code'));  ?></textarea>				
+					<textarea id="header_code" name="tie_options[header_code]" style="width:100%" rows="7"><?php echo htmlspecialchars_decode(tie_get_option('header_code'));  ?></textarea>
 				</div>
 			</div>
-			
+
 			<div class="tiepanel-item">
 				<h3><?php _e( 'Footer Code', 'tie' ) ?></h3>
 				<div class="option-item">
 					<small><?php _e( 'The following code will add to the footer before the closing  &lt;/body&gt; tag. Useful if you need to add Javascript or tracking code.', 'tie' ) ?></small>
-					<textarea id="footer_code" name="tie_options[footer_code]" style="width:100%" rows="7"><?php echo htmlspecialchars_decode(tie_get_option('footer_code'));  ?></textarea>				
+					<textarea id="footer_code" name="tie_options[footer_code]" style="width:100%" rows="7"><?php echo htmlspecialchars_decode(tie_get_option('footer_code'));  ?></textarea>
 				</div>
-			</div>	
-			
+			</div>
+
 		</div>
-		
+
 		<div id="tab9" class="tabs-wrap">
 			<h2><?php _e( 'Header Settings', 'tie' ) ?></h2> <?php echo $save ?>
-			
+
 			<div class="tiepanel-item">
 				<h3><?php _e( 'Logo', 'tie' ) ?></h3>
 				<?php
@@ -411,26 +411,26 @@ $save='
 								"id"			=> "logo",
 								"help"			=> __( 'Upload a logo image, or enter URL to an image if it is already uploaded. the theme default logo gets applied if the input field is left blank.', 'tie' ),
 								"type"			=> "upload",
-								"extra_text"	=> __( 'Recommended size (MAX) : 190px x 60px', 'tie' ) )); 
-								
+								"extra_text"	=> __( 'Recommended size (MAX) : 190px x 60px', 'tie' ) ));
+
 					tie_options(
 						array(	"name"			=> __( 'Logo Image (Retina Version @2x)', 'tie' ),
 								"id"			=> "logo_retina",
 								"type"			=> "upload",
-								"extra_text"	=> __( 'Please choose an image file for the retina version of the logo. It should be 2x the size of main logo.', 'tie' ) )); 			
-					
+								"extra_text"	=> __( 'Please choose an image file for the retina version of the logo. It should be 2x the size of main logo.', 'tie' ) ));
+
 					tie_options(
 						array(	"name"			=> __( 'Standard Logo Width for Retina Logo', 'tie' ),
 								"id"			=> "logo_retina_width",
 								"type"			=> "short-text",
-								"extra_text"	=> __( 'If retina logo is uploaded, please enter the standard logo (1x) version width, do not enter the retina logo width.', 'tie' ) )); 			
+								"extra_text"	=> __( 'If retina logo is uploaded, please enter the standard logo (1x) version width, do not enter the retina logo width.', 'tie' ) ));
 
 					tie_options(
 						array(	"name"			=> __( 'Standard Logo Height for Retina Logo', 'tie' ),
 								"id"			=> "logo_retina_height",
 								"type"			=> "short-text",
-								"extra_text"	=> __( 'If retina logo is uploaded, please enter the standard logo (1x) version height, do not enter the retina logo height.', 'tie' ) )); 			
-								
+								"extra_text"	=> __( 'If retina logo is uploaded, please enter the standard logo (1x) version height, do not enter the retina logo height.', 'tie' ) ));
+
 					tie_options(
 						array(	"name"	=> __( 'Logo Margin Top', 'tie' ),
 								"id"	=> "logo_margin",
@@ -439,7 +439,7 @@ $save='
 								"unit"	=> "px",
 								"max"	=> 100,
 								"min"	=> 0 ));
-								
+
 					tie_options(
 						array(	"name"	=> __( 'Logo Margin Bottom', 'tie' ),
 								"id"	=> "logo_margin_bottom",
@@ -453,16 +453,16 @@ $save='
 						array(	"name"		=> __( 'Full Width Logo', 'tie' ),
 								"id"		=> "full_logo",
 								"type"		=> "checkbox",
-								"extra_text"	=> __( 'Recommended logo width : 1045px', 'tie' ) )); 
+								"extra_text"	=> __( 'Recommended logo width : 1045px', 'tie' ) ));
 
 					tie_options(
 						array(	"name"	=> __( 'Center the Logo', 'tie' ),
 								"id"	=> "center_logo",
-								"type"	=> "checkbox")); 			
+								"type"	=> "checkbox"));
 				?>
 
 			</div>
-			
+
 
 			<div class="tiepanel-item">
 				<h3><?php _e( 'Header Top area Settings', 'tie' ) ?></h3>
@@ -481,39 +481,39 @@ $save='
 						array(	"name"			=> __( "Today's Date Format", 'tie' ),
 								"id"			=> "todaydate_format",
 								"type"			=> "text",
-								"extra_text"	=> '<a target="_blank" href="http://codex.wordpress.org/Formatting_Date_and_Time">'.__( 'Documentation on date and time formatting' , 'tie' ).'</a>')); 			
-																		
-					tie_options(		
+								"extra_text"	=> '<a target="_blank" href="http://codex.wordpress.org/Formatting_Date_and_Time">'.__( 'Documentation on date and time formatting' , 'tie' ).'</a>'));
+
+					tie_options(
 						array(	"name"	=> __( 'Search', 'tie' ),
 								"id"	=> "top_search",
 								"type"	=> "checkbox"));
-								
-					tie_options(		
+
+					tie_options(
 						array(	"name"	=> __( 'Live Search', 'tie' ),
 								"id"	=> "live_search",
-								"type"	=> "checkbox"));	
-								
-					tie_options(		
+								"type"	=> "checkbox"));
+
+					tie_options(
 						array(	"name"	=> __( 'Social Icons', 'tie' ),
 								"id"	=> "top_social",
-								"type"	=> "checkbox"));			
-				?>		
+								"type"	=> "checkbox"));
+				?>
 			</div>
-			
-			
+
+
 			<div class="tiepanel-item">
 				<h3><?php _e( 'Main Nav Settings', 'tie' ) ?></h3>
 				<?php
 					tie_options(
 						array(	"name"	=> __( 'Hide Main Nav', 'tie' ),
 								"id"	=> "main_nav",
-								"type"	=> "checkbox"));	
-																			
+								"type"	=> "checkbox"));
+
 					tie_options(
 						array(	"name"	=> __( 'Random Article Button', 'tie' ),
 								"id"	=> "random_article",
 								"type"	=> "checkbox"));
-								
+
 				if (class_exists('Woocommerce'))
 					tie_options(
 						array(	"name"	=> __( 'Shopping Cart', 'tie' ),
@@ -523,49 +523,49 @@ $save='
 					tie_options(
 						array(	"name"	=> __( 'Stick The Navigation menu', 'tie' ),
 								"id"	=> "stick_nav",
-								"type"	=> "checkbox")); 
+								"type"	=> "checkbox"));
 
 					tie_options(
 						array(	"name"	=> __( 'Logo in the sticky Navigation menu', 'tie' ),
 								"id"	=> "nav_logo",
-								"type"	=> "upload" )); 			
-													
-				?>		
-			</div>			
-			
-			
+								"type"	=> "upload" ));
+
+				?>
+			</div>
+
+
 			<div class="tiepanel-item">
 				<h3><?php _e( 'Responsive Mobile Menu Settings', 'tie' ) ?></h3>
 				<?php
 					tie_options(
 						array(	"name"	=> __( 'Enable the Mobile Menu', 'tie' ),
 								"id"	=> "mobile_menu_active",
-								"type"	=> "checkbox"));	
-					
+								"type"	=> "checkbox"));
+
 					tie_options(
 						array(	"name"	=> __( 'Search', 'tie' ),
 								"id"	=> "mobile_menu_search",
-								"type"	=> "checkbox")); 
+								"type"	=> "checkbox"));
 
 					tie_options(
 						array(	"name"	=> __( 'Social Icons', 'tie' ),
 								"id"	=> "mobile_menu_social",
 								"type"	=> "checkbox" ));
-								
+
 					tie_options(
 						array(	"name"	=> __( 'Show the Top Menu items in the Mobile Menu below the Main Menu items ?', 'tie' ),
 								"id"	=> "mobile_menu_top",
 								"type"	=> "checkbox" ));
-								
+
 					tie_options(
 						array(	"name"	=> __( 'Hide the Mobile Menu Items Icons', 'tie' ),
 								"id"	=> "mobile_menu_hide_icons",
 								"type"	=> "checkbox" ));
-		
-													
-				?>		
+
+
+				?>
 			</div>
-			
+
 
 			<div class="tiepanel-item">
 				<h3><?php _e( 'Breaking News', 'tie' ) ?></h3>
@@ -578,8 +578,8 @@ $save='
 					tie_options(
 						array(	"name"	=> __( 'Show in Homepage Only', 'tie' ),
 								"id"	=> "breaking_home",
-								"type"	=> "checkbox")); 
-																												
+								"type"	=> "checkbox"));
+
 					tie_options(
 						array(	"name"		=> __( 'Animation Effect', 'tie' ),
 								"id"		=> "breaking_effect",
@@ -588,7 +588,7 @@ $save='
 												'fade'	=> __( 'Fade', 'tie' ),
 												'slide'	=> __( 'Slide', 'tie' ),
 												'ticker'=> __( 'Ticker', 'tie' ))));
-								
+
 					tie_options(
 						array(	"name"	=> __( 'Animation Speed', 'tie' ),
 								"id"	=> "breaking_speed",
@@ -597,7 +597,7 @@ $save='
 								"max"	=> 40000,
 								"min"	=> 100 ));
 
-								
+
 					tie_options(
 						array(	"name"	=> __( 'Time between the fades', 'tie' ),
 								"id"	=> "breaking_time",
@@ -605,28 +605,28 @@ $save='
 								"unit"	=> "ms",
 								"max"	=> 40000,
 								"min"	=> 100 ));
-				
-			
+
+
 					tie_options(
 						array(	"name"		=> __( 'Breaking News Query Type', 'tie' ),
 								"id"		=> "breaking_type",
 								"type"		=> "radio",
 								"options"	=> array(	"category"	=>	__( 'Categories', 'tie' ) ,
 														"tag"		=>	__( 'Tags', 'tie' ),
-														"custom"	=>	__( 'Custom Text', 'tie' )))); 
-															
-					
+														"custom"	=>	__( 'Custom Text', 'tie' ))));
+
+
 					tie_options(
 						array(	"name"	=> __( 'Number of posts to show', 'tie' ),
 								"id"	=> "breaking_number",
 								"type"	=> "short-text"));
-								
+
 					tie_options(
 						array(	"name"	=> __( 'Breaking News Tags', 'tie' ),
 								"help"	=> __( 'Enter a tag name, or names separated by comma.', 'tie' ),
 								"id"	=> "breaking_tag",
 								"type"	=> "text"));
-								
+
 				?>
 
 					<div class="option-item" id="breaking_cat-item">
@@ -639,19 +639,19 @@ $save='
 							<?php } ?>
 						</select>
 					</div>
-		
+
 			</div>
-			
+
 			<div class="tiepanel-item" id="breaking_custom-item">
 				<h3><?php _e( 'Breaking News Custom Text', 'tie' ) ?></h3>
 					<div class="option-item" >
-					
+
 						<span class="label" style="width:40px"><?php _e( 'Text', 'tie' ) ?></span>
 						<input id="custom_text" type="text" size="56" style="direction:ltr; text-laign:left; width:200px; float:left" name="custom_text" value="" />
 						<span class="label" style="width:40px; margin-left:10px;"><?php _e( 'Link', 'tie' ) ?></span>
 						<input id="custom_link" type="text" size="56" style="direction:ltr; text-laign:left; width:200px; float:left" name="custom_link" value="" />
 						<input id="TextAdd"  class="button" type="button" value="Add" />
-							
+
 						<ul id="customList" style="margin-top:15px;">
 						<?php $breaking_custom = tie_get_option( 'breaking_custom' ) ;
 							$custom_count = 0 ;
@@ -671,23 +671,23 @@ $save='
 						<script>
 							var customnext = <?php echo $custom_count+1 ?> ;
 						</script>
-					</div>	
+					</div>
 				</div>
 		</div> <!-- Header Settings -->
-			
-		
+
+
 		<div id="tab4" class="tabs-wrap">
 			<h2><?php _e( 'Social Networking', 'tie' ) ?></h2> <?php echo $save ?>
 
 			<div class="tiepanel-item">
 				<h3><?php _e( 'Custom Feed URL', 'tie' ) ?></h3>
-							
+
 				<?php
 					tie_options(
 						array(	"name"	=> __( 'Hide RSS Icon', 'tie' ),
 								"id"	=> "rss_icon",
 								"type"	=> "checkbox"));
-								
+
 					tie_options(
 						array(	"name"	=> __( 'Custom Feed URL', 'tie' ),
 								"id"	=> "rss_url",
@@ -695,10 +695,10 @@ $save='
 								"type"	=> "text"));
 				?>
 			</div>
-			
+
 			<div class="tiepanel-item">
-				<h3><?php _e( 'Social Networking', 'tie' ) ?></h3>					
-				<?php						
+				<h3><?php _e( 'Social Networking', 'tie' ) ?></h3>
+				<?php
 					tie_options(
 						array(	"name"	=> __( 'Facebook URL', 'tie' ),
 								"id"	=> "social",
@@ -720,145 +720,145 @@ $save='
 								"id"	=> "social",
 								"key"	=> "dribbble",
 								"type"	=> "arrayText"));
-								
+
 					tie_options(
 						array(	"name"	=> __( 'LinkedIn URL', 'tie' ),
 								"id"	=> "social",
 								"key"	=> "linkedin",
 								"type"	=> "arrayText"));
-								
+
 					tie_options(
 						array(	"name"	=> __( 'Evernote URL', 'tie' ),
 								"id"	=> "social",
 								"key"	=> "evernote",
 								"type"	=> "arrayText"));
-								
+
 					tie_options(
 						array(	"name"	=> __( 'Dropbox URL', 'tie' ),
 								"id"	=> "social",
 								"key"	=> "dropbox",
 								"type"	=> "arrayText"));
-								
+
 					tie_options(
 						array(	"name"	=> __( 'Flickr URL', 'tie' ),
 								"id"	=> "social",
 								"key"	=> "flickr",
 								"type"	=> "arrayText"));
-								
+
 					tie_options(
 						array(	"name"	=> __( 'Picasa Web URL', 'tie' ),
 								"id"	=> "social",
 								"key"	=> "picasa",
 								"type"	=> "arrayText"));
-								
+
 					tie_options(
 						array(	"name"	=> __( 'DeviantArt URL', 'tie' ),
 								"id"	=> "social",
 								"key"	=> "deviantart",
 								"type"	=> "arrayText"));
-								
+
 					tie_options(
 						array(	"name"	=> __( 'YouTube URL', 'tie' ),
 								"id"	=> "social",
 								"key"	=> "youtube",
 								"type"	=> "arrayText"));
-								
+
 					tie_options(
 						array(	"name"	=> __( 'Grooveshark URL', 'tie' ),
 								"id"	=> "social",
 								"key"	=> "grooveshark",
 								"type"	=> "arrayText"));
-								
+
 					tie_options(
 						array(	"name"	=> __( 'Vimeo URL', 'tie' ),
 								"id"	=> "social",
 								"key"	=> "vimeo",
 								"type"	=> "arrayText"));
-								
+
 					tie_options(
 						array(	"name"	=> __( 'ShareThis URL', 'tie' ),
 								"id"	=> "social",
 								"key"	=> "sharethis",
 								"type"	=> "arrayText"));
-								
+
 					tie_options(
 						array(	"name"	=> __( '500px URL', 'tie' ),
 								"id"	=> "social",
 								"key"	=> "px500",
 								"type"	=> "arrayText"));
-								
+
 					tie_options(
 						array(	"name"	=> __( 'Skype URL', 'tie' ),
 								"id"	=> "social",
 								"key"	=> "skype",
 								"type"	=> "arrayText"));
-								
+
 					tie_options(
 						array(	"name"	=> __( 'Digg URL', 'tie' ),
 								"id"	=> "social",
 								"key"	=> "digg",
 								"type"	=> "arrayText"));
-								
+
 					tie_options(
 						array(	"name"	=> __( 'Reddit URL', 'tie' ),
 								"id"	=> "social",
 								"key"	=> "reddit",
 								"type"	=> "arrayText"));
-								
+
 					tie_options(
 						array(	"name"	=> __( 'Delicious URL', 'tie' ),
 								"id"	=> "social",
 								"key"	=> "delicious",
 								"type"	=> "arrayText"));
-								
+
 					tie_options(
 						array(	"name"	=> __( 'StumbleUpon  URL', 'tie' ),
 								"key"	=> "stumbleupon",
 								"id"	=> "social",
 								"type"	=> "arrayText"));
-								
+
 					tie_options(
 						array(	"name"	=> __( 'Tumblr URL', 'tie' ),
 								"id"	=> "social",
 								"key"	=> "tumblr",
 								"type"	=> "arrayText"));
-								
+
 					tie_options(
 						array(	"name"	=> __( 'Blogger URL', 'tie' ),
 								"id"	=> "social",
 								"key"	=> "blogger",
 								"type"	=> "arrayText"));
-								
+
 					tie_options(
 						array(	"name"	=> __( 'WordPress URL', 'tie' ),
 								"id"	=> "social",
 								"key"	=> "wordpress",
 								"type"	=> "arrayText"));
-								
+
 					tie_options(
 						array(	"name"	=> __( 'Yelp URL', 'tie' ),
 								"id"	=> "social",
 								"key"	=> "yelp",
-								"type"	=> "arrayText"));							
-																					
+								"type"	=> "arrayText"));
+
 					tie_options(
 						array(	"name"	=> __( 'Last.fm URL', 'tie' ),
 								"id"	=> "social",
 								"key"	=> "lastfm",
 								"type"	=> "arrayText"));
-								
+
 					tie_options(
 						array(	"name"	=> __( 'Apple URL', 'tie' ),
 								"id"	=> "social",
 								"key"	=> "apple",
 								"type"	=> "arrayText"));
-								
+
 					tie_options(
 						array(	"name"	=> __( 'FourSquare URL', 'tie' ),
 								"id"	=> "social",
 								"key"	=> "foursquare",
 								"type"	=> "arrayText"));
-								
+
 					tie_options(
 						array(	"name"	=> __( 'Github URL', 'tie' ),
 								"id"	=> "social",
@@ -870,200 +870,200 @@ $save='
 								"id"	=> "social",
 								"key"	=> "soundcloud",
 								"type"	=> "arrayText"));
-								
+
 					tie_options(
 						array(	"name"	=> __( 'XING URL', 'tie' ),
 								"id"	=> "social",
 								"key"	=> "xing",
 								"type"	=> "arrayText"));
-								
+
 					tie_options(
 						array(	"name"	=> __( 'Google Play URL', 'tie' ),
 								"id"	=> "social",
 								"key"	=> "google_play",
 								"type"	=> "arrayText"));
-								
+
 					tie_options(
 						array(	"name"	=> __( 'Pinterest URL', 'tie' ),
 								"id"	=> "social",
 								"key"	=> "Pinterest",
 								"type"	=> "arrayText"));
-								
+
 					tie_options(
 						array(	"name"	=> __( 'Instagram URL', 'tie' ),
 								"id"	=> "social",
 								"key"	=> "instagram",
 								"type"	=> "arrayText"));
-								
+
 					tie_options(
 						array(	"name"	=> __( 'Spotify URL', 'tie' ),
 								"id"	=> "social",
 								"key"	=> "spotify",
 								"type"	=> "arrayText"));
-								
+
 					tie_options(
 						array(	"name"	=> __( 'PayPal URL', 'tie' ),
 								"id"	=> "social",
 								"key"	=> "paypal",
 								"type"	=> "arrayText"));
-								
+
 					tie_options(
 						array(	"name"	=> __( 'Forrst URL', 'tie' ),
 								"id"	=> "social",
 								"key"	=> "forrst",
 								"type"	=> "arrayText"));
-								
+
 					tie_options(
 						array(	"name"	=> __( 'Behance URL', 'tie' ),
 								"id"	=> "social",
 								"key"	=> "behance",
 								"type"	=> "arrayText"));
-								
+
 					tie_options(
 						array(	"name"	=> __( 'Viadeo URL', 'tie' ),
 								"id"	=> "social",
 								"key"	=> "viadeo",
 								"type"	=> "arrayText"));
-								
+
 					tie_options(
 						array(	"name"	=> __( 'VK.com URL', 'tie' ),
 								"id"	=> "social",
 								"key"	=> "vk",
 								"type"	=> "arrayText"));
 				?>
-			</div>	
+			</div>
 
 			<div class="tiepanel-item">
-				<h3><?php _e( 'Custom Social Network', 'tie' ) ?> #1</h3>				
+				<h3><?php _e( 'Custom Social Network', 'tie' ) ?> #1</h3>
 					<?php
 						tie_options(
 							array(	"name"	=> __( 'Title', 'tie' ),
 									"id"	=> "custom_social_title_1",
-									"type"	=> "text"));	
+									"type"	=> "text"));
 
 						tie_options(
 							array(	"name"	=> __( 'Icon (use full Font Awesome name)', 'tie' ),
 									"id"	=> "custom_social_icon_1",
 									"type"	=> "text"));
-									
+
 						tie_options(
 							array(	"name"	=> __( 'URL', 'tie' ),
 									"id"	=> "custom_social_url_1",
 									"type"	=> "text"));
-									
+
 						tie_options(
 							array(	"name"	=> __( 'Color', 'tie' ),
 									"id"	=> "custom_social_color_1",
 									"type"	=> "color"));
 					?>
 			</div>
-			
+
 			<div class="tiepanel-item">
-				<h3><?php _e( 'Custom Social Network', 'tie' ) ?> #2</h3>				
+				<h3><?php _e( 'Custom Social Network', 'tie' ) ?> #2</h3>
 					<?php
 						tie_options(
 							array(	"name"	=> __( 'Title', 'tie' ),
 									"id"	=> "custom_social_title_2",
-									"type"	=> "text"));	
+									"type"	=> "text"));
 
 						tie_options(
 							array(	"name"	=> __( 'Icon (use full Font Awesome name)', 'tie' ),
 									"id"	=> "custom_social_icon_2",
 									"type"	=> "text"));
-									
+
 						tie_options(
 							array(	"name"	=> __( 'URL', 'tie' ),
 									"id"	=> "custom_social_url_2",
 									"type"	=> "text"));
-									
+
 						tie_options(
 							array(	"name"	=> __( 'Color', 'tie' ),
 									"id"	=> "custom_social_color_2",
 									"type"	=> "color"));
 					?>
 			</div>
-			
+
 			<div class="tiepanel-item">
-				<h3><?php _e( 'Custom Social Network', 'tie' ) ?> #3</h3>				
+				<h3><?php _e( 'Custom Social Network', 'tie' ) ?> #3</h3>
 					<?php
 						tie_options(
 							array(	"name"	=> __( 'Title', 'tie' ),
 									"id"	=> "custom_social_title_3",
-									"type"	=> "text"));	
+									"type"	=> "text"));
 
 						tie_options(
 							array(	"name"	=> __( 'Icon (use full Font Awesome name)', 'tie' ),
 									"id"	=> "custom_social_icon_3",
 									"type"	=> "text"));
-									
+
 						tie_options(
 							array(	"name"	=> __( 'URL', 'tie' ),
 									"id"	=> "custom_social_url_3",
 									"type"	=> "text"));
-									
+
 						tie_options(
 							array(	"name"	=> __( 'Color', 'tie' ),
 									"id"	=> "custom_social_color_3",
 									"type"	=> "color"));
 					?>
 			</div>
-			
+
 			<div class="tiepanel-item">
-				<h3><?php _e( 'Custom Social Network', 'tie' ) ?> #4</h3>				
+				<h3><?php _e( 'Custom Social Network', 'tie' ) ?> #4</h3>
 					<?php
 						tie_options(
 							array(	"name"	=> __( 'Title', 'tie' ),
 									"id"	=> "custom_social_title_4",
-									"type"	=> "text"));	
+									"type"	=> "text"));
 
 						tie_options(
 							array(	"name"	=> __( 'Icon (use full Font Awesome name)', 'tie' ),
 									"id"	=> "custom_social_icon_4",
 									"type"	=> "text"));
-									
+
 						tie_options(
 							array(	"name"	=> __( 'URL', 'tie' ),
 									"id"	=> "custom_social_url_4",
 									"type"	=> "text"));
-									
+
 						tie_options(
 							array(	"name"	=> __( 'Color', 'tie' ),
 									"id"	=> "custom_social_color_4",
 									"type"	=> "color"));
 					?>
 			</div>
-			
+
 			<div class="tiepanel-item">
-				<h3><?php _e( 'Custom Social Network', 'tie' ) ?> #5</h3>				
+				<h3><?php _e( 'Custom Social Network', 'tie' ) ?> #5</h3>
 					<?php
 						tie_options(
 							array(	"name"	=> __( 'Title', 'tie' ),
 									"id"	=> "custom_social_title_5",
-									"type"	=> "text"));	
+									"type"	=> "text"));
 
 						tie_options(
 							array(	"name"	=> __( 'Icon (use full Font Awesome name)', 'tie' ),
 									"id"	=> "custom_social_icon_5",
 									"type"	=> "text"));
-									
+
 						tie_options(
 							array(	"name"	=> __( 'URL', 'tie' ),
 									"id"	=> "custom_social_url_5",
 									"type"	=> "text"));
-									
+
 						tie_options(
 							array(	"name"	=> __( 'Color', 'tie' ),
 									"id"	=> "custom_social_color_5",
 									"type"	=> "color"));
 					?>
 			</div>
-		
+
 		</div><!-- Social Networking -->
-		
-	
+
+
 		<div id="tab6" class="tab_content tabs-wrap">
 			<h2><?php _e( 'Posts Settings', 'tie' ) ?></h2> <?php echo $save ?>
-					
+
 			<div class="tiepanel-item">
 				<h3><?php _e( 'Posts Settings', 'tie' ) ?></h3>
 				<?php
@@ -1080,17 +1080,17 @@ $save='
 					tie_options(
 						array(	"name"	=> __( 'Next/Prev Articles', 'tie' ),
 								"id"	=> "post_nav",
-								"type"	=> "checkbox")); 
+								"type"	=> "checkbox"));
 
 					tie_options(
 						array(	"name"	=> __( 'OG Meta', 'tie' ),
 								"id"	=> "post_og_cards",
-								"type"	=> "checkbox")); 
- 
+								"type"	=> "checkbox"));
+
 
 				?>
 			</div>
-			
+
 			<div class="tiepanel-item">
 
 				<h3><?php _e( 'Post Meta Settings', 'tie' ) ?></h3>
@@ -1124,17 +1124,17 @@ $save='
 						array(	"name"	=> __( 'Tags Meta', 'tie' ),
 								"id"	=> "post_tags",
 								"type"	=> "checkbox"));
-					
+
 					tie_options(
 						array(	"name"	=> __( 'Views Meta', 'tie' ),
 								"id"	=> "post_views",
 								"type"	=> "checkbox"));
 
-								
-				?>	
+
+				?>
 			</div>
 
-				
+
 			<div class="tiepanel-item">
 
 				<h3><?php _e( 'Share Post Settings', 'tie' ) ?></h3>
@@ -1148,19 +1148,19 @@ $save='
 						array(	"name"	=> __( 'Top Share Post Buttons', 'tie' ),
 								"id"	=> "share_post_top",
 								"type"	=> "checkbox"));
-								
+
 					tie_options(
 						array(	"name"	=> __( 'Share Buttons for Pages', 'tie' ),
 								"id"	=> "share_buttons_pages",
 								"type"	=> "checkbox"));
-					
+
 					tie_options(
 						array(	"name"		=> __( 'Share Buttons type', 'tie' ),
 								"id"		=> "share_post_type",
 								"type"		=> "radio",
 								"options"	=> array(	"counters"	=> __( 'Buttons with counters', 'tie' ) ,
-														"flat"	=> __( 'Flat Buttons', 'tie' ) ))); 
-								
+														"flat"	=> __( 'Flat Buttons', 'tie' ) )));
+
 					tie_options(
 						array(	"name"	=> __( "Use the post's Short Link", 'tie' ),
 								"id"	=> "share_shortlink",
@@ -1170,33 +1170,33 @@ $save='
 						array(	"name"	=> __( 'Tweet Button', 'tie' ),
 								"id"	=> "share_tweet",
 								"type"	=> "checkbox"));
-								
+
 					tie_options(
 						array(	"name"	=> __( 'Twitter Username <small>(optional)</small>', 'tie' ),
 								"id"	=> "share_twitter_username",
 								"type"	=> "text"));
-						
+
 					tie_options(
 						array(	"name"	=> __( 'Facebook Like Button', 'tie' ),
 								"id"	=> "share_facebook",
 								"type"	=> "checkbox"));
-								
+
 					tie_options(
 						array(	"name"	=> __( 'Google+ Button', 'tie' ),
 								"id"	=> "share_google",
 								"type"	=> "checkbox"));
-													
+
 					tie_options(
 						array(	"name"	=> __( 'LinkedIn Button', 'tie' ),
 								"id"	=> "share_linkdin",
 								"type"	=> "checkbox"));
-																					
+
 					tie_options(
 						array(	"name"	=> __( 'StumbleUpon Button', 'tie' ),
 								"id"	=> "share_stumble",
 								"type"	=> "checkbox"));
-								
-																			
+
+
 					tie_options(
 						array(	"name"	=> __( 'Pinterest Button', 'tie' ),
 								"id"	=> "share_pinterest",
@@ -1211,10 +1211,36 @@ $save='
 						array(	"name"	=> __( 'LINE Button', 'tie' ),
 								"id"	=> "share_line",
 								"type"	=> "checkbox"));
-				?>	
+				?>
 			</div>
 
-				
+			<div class="tiepanel-item">
+
+				<h3><?php _e( 'Custom Social Share Button', 'tie' ) ?></h3>
+				<?php
+					tie_options(
+						array(	"name"	=> __( 'Custom Share Button', 'tie' ),
+								"id"	=> "custom_share_button",
+								"type"	=> "checkbox"));
+
+					tie_options(
+						array(	"name"	=> __( 'Twitter', 'tie' ),
+								"id"	=> "custom_share_T",
+								"type"	=> "checkbox"));
+
+					tie_options(
+						array(	"name"	=> __( 'Facebook', 'tie' ),
+								"id"	=> "custom_share_F",
+								"type"	=> "checkbox"));
+
+					tie_options(
+						array(	"name"	=> __( 'Line(mobile only)', 'tie' ),
+								"id"	=> "custom_share_L",
+								"type"	=> "checkbox"));
+				?>
+			</div>
+
+
 			<div class="tiepanel-item">
 
 				<h3><?php _e( 'Related Posts Settings', 'tie' ) ?></h3>
@@ -1223,35 +1249,35 @@ $save='
 						array(	"name"	=> __( 'Related Posts', 'tie' ),
 								"id"	=> "related",
 								"type"	=> "checkbox"));
-								
+
 					tie_options(
 						array(	"name"		=> __( 'Related Posts Position', 'tie' ),
 								"id"		=> "related_position",
 								"type"		=> "radio",
 								"options"	=> array(	"in"	=> __( 'In the post content area', 'tie' ) ,
-														"below"	=> __( 'Below the post area', 'tie' ) ))); 
-																
+														"below"	=> __( 'Below the post area', 'tie' ) )));
+
 					tie_options(
 						array(	"name"	=> __( 'Number of posts to show', 'tie' ),
 								"id"	=> "related_number",
-								"type"	=> "short-text"));	
-								
+								"type"	=> "short-text"));
+
 					tie_options(
 						array(	"name"	=> __( 'Number of posts to show in Full width pages', 'tie' ),
 								"id"	=> "related_number_full",
 								"type"	=> "short-text"));
-								
+
 					tie_options(
 						array(	"name"		=> __( 'Query Type', 'tie' ),
 								"id"		=> "related_query",
 								"type"		=> "radio",
 								"options"	=> array(	"category"	=> __( 'Posts in the same Categories', 'tie' ) ,
 														"tag"		=> __( 'Posts in the same Tags', 'tie' ),
-														"author"	=> __( 'Posts by the same Author', 'tie' ) ))); 
+														"author"	=> __( 'Posts by the same Author', 'tie' ) )));
 				?>
-			</div>	
+			</div>
 
-			
+
 			<div class="tiepanel-item">
 
 				<h3><?php _e( 'Fly Check Also Box', 'tie' ) ?></h3>
@@ -1260,18 +1286,18 @@ $save='
 						array(	"name"	=> __( 'Check Also Box', 'tie' ),
 								"id"	=> "check_also",
 								"type"	=> "checkbox"));
-								
+
 					tie_options(
 						array(	"name"		=> __( 'Check Also Box Position', 'tie' ),
 								"id"		=> "check_also_position",
 								"type"		=> "radio",
 								"options"	=> array(	"right"	=> __( 'Right', 'tie' ) ,
-														"left"	=> __( 'Left', 'tie' ) ))); 
-																
+														"left"	=> __( 'Left', 'tie' ) )));
+
 					tie_options(
 						array(	"name"	=> __( 'Number of posts to show', 'tie' ),
 								"id"	=> "check_also_number",
-								"type"	=> "short-text"));	
+								"type"	=> "short-text"));
 
 					tie_options(
 						array(	"name"		=> __( 'Query Type', 'tie' ),
@@ -1279,11 +1305,11 @@ $save='
 								"type"		=> "radio",
 								"options"	=> array(	"category"	=> __( 'Posts in the same Categories', 'tie' ) ,
 														"tag"		=> __( 'Posts in the same Tags', 'tie' ),
-														"author"	=> __( 'Posts by the same Author', 'tie' ) ))); 
+														"author"	=> __( 'Posts by the same Author', 'tie' ) )));
 				?>
 			</div>
 
-			
+
 			<div class="tiepanel-item">
 
 				<h3><?php _e( 'jQuery Comments Settings', 'tie' ) ?></h3>
@@ -1295,8 +1321,8 @@ $save='
 				?>
 			</div>
 		</div> <!-- Article Settings -->
-		
-		
+
+
 		<div id="tab7" class="tabs-wrap">
 			<h2><?php _e( 'Footer Settings', 'tie' ) ?></h2> <?php echo $save ?>
 
@@ -1312,11 +1338,11 @@ $save='
 					tie_options(
 						array(	"name"	=> __( 'Social Icons', 'tie' ),
 								"id"	=> "footer_social",
-								"type"	=> "checkbox")); 
+								"type"	=> "checkbox"));
 
 				?>
 			</div>
-			
+
 			<div class="tiepanel-item">
 				<h3><?php _e( 'Footer Widgets layout', 'tie' ) ?></h3>
 					<?php
@@ -1366,11 +1392,11 @@ $save='
 					</ul>
 				</div>
 			</div>
-			
+
 			<div class="tiepanel-item">
 				<h3><?php _e( 'Footer Text One', 'tie' ) ?></h3>
 				<div class="option-item">
-					<textarea id="tie_footer_one" name="tie_options[footer_one]" style="width:100%" rows="4"><?php echo htmlspecialchars_decode(tie_get_option('footer_one'));  ?></textarea>				
+					<textarea id="tie_footer_one" name="tie_options[footer_one]" style="width:100%" rows="4"><?php echo htmlspecialchars_decode(tie_get_option('footer_one'));  ?></textarea>
 					<span style="padding:0" class="extra-text"><strong style="font-size: 12px;"><?php _e( 'Variables', 'tie' ) ?></strong>
 						<?php _e( 'These tags can be included in the textarea above and will be replaced when a page is displayed.', 'tie' ) ?>
 						<br />
@@ -1380,11 +1406,11 @@ $save='
 					</span>
 				</div>
 			</div>
-			
+
 			<div class="tiepanel-item">
 				<h3><?php _e( 'Footer Text Two', 'tie' ) ?></h3>
 				<div class="option-item">
-					<textarea id="tie_footer_two" name="tie_options[footer_two]" style="width:100%" rows="4"><?php echo htmlspecialchars_decode(tie_get_option('footer_two'));  ?></textarea>				
+					<textarea id="tie_footer_two" name="tie_options[footer_two]" style="width:100%" rows="4"><?php echo htmlspecialchars_decode(tie_get_option('footer_two'));  ?></textarea>
 					<span style="padding:0" class="extra-text"><strong style="font-size: 12px;"><?php _e( 'Variables', 'tie' ) ?></strong>
 						<?php _e( 'These tags can be included in the textarea above and will be replaced when a page is displayed.', 'tie' ) ?>
 						<br />
@@ -1397,18 +1423,18 @@ $save='
 
 		</div><!-- Footer Settings -->
 
-		
+
 		<div id="tab8" class="tab_content tabs-wrap">
 			<h2><?php _e( 'Banners Settings', 'tie' ) ?></h2> <?php echo $save ?>
 			<div class="tiepanel-item">
 				<h3><?php _e( 'Background Image ADS', 'tie' ) ?></h3>
 				<?php
-					tie_options(				
+					tie_options(
 						array(	"name"	=> __( 'Enable Background Image ADS', 'tie' ),
 								"id"	=> "banner_bg",
-								"type"	=> "checkbox")); 	
-							
-					tie_options(					
+								"type"	=> "checkbox"));
+
+					tie_options(
 						array(	"name"	=> __( 'Background Image ADS Link', 'tie' ),
 								"id"	=> "banner_bg_url",
 								"type"	=> "text"));
@@ -1420,7 +1446,7 @@ $save='
 			<div class="tiepanel-item">
 				<h3><?php _e( 'Top Banner Area', 'tie' ) ?></h3>
 				<?php
-					tie_options(				
+					tie_options(
 						array(	"name"	=> __( 'Top Banner', 'tie' ),
 								"id"	=> "banner_top",
 								"type"	=> "checkbox"));
@@ -1429,21 +1455,21 @@ $save='
 					<h4 class="accordion-head"><a href=""><?php _e( 'Image Ad', 'tie' ) ?></a></h4>
 					<div class="tie-accordion-contnet">
 				<?php
-					tie_options(			
+					tie_options(
 						array(	"name"	=> __( 'Top Banner Image', 'tie' ),
 								"id"	=> "banner_top_img",
-								"type"	=> "upload")); 
-								
-					tie_options(					
+								"type"	=> "upload"));
+
+					tie_options(
 						array(	"name"	=> __( 'Top Banner Link', 'tie' ),
 								"id"	=> "banner_top_url",
-								"type"	=> "text")); 
-								
-					tie_options(				
+								"type"	=> "text"));
+
+					tie_options(
 						array(	"name"	=> __( 'Alternative Text For The image', 'tie' ),
 								"id"	=> "banner_top_alt",
 								"type"	=> "text"));
-								
+
 					tie_options(
 						array(	"name"	=> __( 'Open The Link In a new Tab', 'tie' ),
 								"id"	=> "banner_top_tab",
@@ -1458,22 +1484,22 @@ $save='
 					<h4 class="accordion-head"><a href=""><?php _e( 'Responsive Google AdSense', 'tie' ) ?></a></h4>
 					<div class="tie-accordion-contnet">
 				<?php
-					tie_options(					
+					tie_options(
 						array(	"name"	=> __( 'Publisher ID', 'tie' ),
 								"id"	=> "banner_top_publisher",
 								"type"	=> "text"));
 
-					tie_options(					
+					tie_options(
 						array(	"name"	=> __( '728x90 (Leaderboard) - ad ID', 'tie' ),
 								"id"	=> "banner_top_728",
 								"type"	=> "text"));
-								
-					tie_options(					
+
+					tie_options(
 						array(	"name"	=> __( '468x60 (Banner) - ad ID', 'tie' ),
 								"id"	=> "banner_top_468",
 								"type"	=> "text"));
-								
-					tie_options(					
+
+					tie_options(
 						array(	"name"	=> __( '300x250 (Medium Rectangle) - ad ID', 'tie' ),
 								"id"	=> "banner_top_300",
 								"type"	=> "text"));
@@ -1483,11 +1509,11 @@ $save='
 					<h4 class="accordion-head"><a href=""><?php _e( 'Custom Code', 'tie' ) ?></a></h4>
 					<div class="tie-accordion-contnet">
 				<?php
-					tie_options(					
+					tie_options(
 						array(	"name"			=> __( 'Custom Ad Code', 'tie' ),
 								"id"			=> "banner_top_adsense",
 								"extra_text"	=> __( 'Supports: Text, HTML and Shortcodes.', 'tie' ),
-								"type"			=> "textarea")); 
+								"type"			=> "textarea"));
 				?>
 					</div>
 				</div>
@@ -1496,35 +1522,35 @@ $save='
 			<div class="tiepanel-item">
 				<h3><?php _e( 'Bottom Banner Area', 'tie' ) ?></h3>
 				<?php
-					tie_options(				
+					tie_options(
 						array(	"name"	=> __( 'Bottom Banner', 'tie' ),
 								"id"	=> "banner_bottom",
-								"type"	=> "checkbox")); 
+								"type"	=> "checkbox"));
 				?>
 				<div class="tie-accordion">
 					<h4 class="accordion-head"><a href=""><?php _e( 'Image Ad', 'tie' ) ?></a></h4>
 					<div class="tie-accordion-contnet">
 				<?php
-					tie_options(			
+					tie_options(
 						array(	"name"	=> __( 'Bottom Banner Image', 'tie' ),
 								"id"	=> "banner_bottom_img",
-								"type"	=> "upload")); 
-								
-					tie_options(					
+								"type"	=> "upload"));
+
+					tie_options(
 						array(	"name"	=> __( 'Bottom Banner Link', 'tie' ),
 								"id"	=> "banner_bottom_url",
-								"type"	=> "text")); 
-								
-					tie_options(				
+								"type"	=> "text"));
+
+					tie_options(
 						array(	"name"	=> __( 'Alternative Text For The image', 'tie' ),
 								"id"	=> "banner_bottom_alt",
 								"type"	=> "text"));
-								
+
 					tie_options(
 						array(	"name"	=> __( 'Open The Link In a new Tab', 'tie' ),
 								"id"	=> "banner_bottom_tab",
 								"type"	=> "checkbox"));
-						
+
 					tie_options(
 						array(	"name"	=> __( 'Nofollow', 'tie' ),
 								"id"	=> "banner_bottom_nofollow",
@@ -1534,22 +1560,22 @@ $save='
 					<h4 class="accordion-head"><a href=""><?php _e( 'Responsive Google AdSense', 'tie' ) ?></a></h4>
 					<div class="tie-accordion-contnet">
 				<?php
-					tie_options(					
+					tie_options(
 						array(	"name"	=> __( 'Publisher ID', 'tie' ),
 								"id"	=> "banner_bottom_publisher",
 								"type"	=> "text"));
 
-					tie_options(					
+					tie_options(
 						array(	"name"	=> __( '728x90 (Leaderboard) - ad ID', 'tie' ),
 								"id"	=> "banner_bottom_728",
 								"type"	=> "text"));
-								
-					tie_options(					
+
+					tie_options(
 						array(	"name"	=> __( '468x60 (Banner) - ad ID', 'tie' ),
 								"id"	=> "banner_bottom_468",
 								"type"	=> "text"));
-								
-					tie_options(					
+
+					tie_options(
 						array(	"name"	=> __( '300x250 (Medium Rectangle) - ad ID', 'tie' ),
 								"id"	=> "banner_bottom_300",
 								"type"	=> "text"));
@@ -1559,48 +1585,48 @@ $save='
 					<h4 class="accordion-head"><a href=""><?php _e( 'Custom Code', 'tie' ) ?></a></h4>
 					<div class="tie-accordion-contnet">
 				<?php
-					tie_options(					
+					tie_options(
 						array(	"name"			=> __( 'Custom Ad Code', 'tie' ),
 								"id"			=> "banner_bottom_adsense",
 								"extra_text"	=> __( 'Supports: Text, HTML and Shortcodes.', 'tie' ),
-								"type"			=> "textarea")); 
+								"type"			=> "textarea"));
 				?>
 					</div>
 				</div>
 			</div>
-	
+
 			<div class="tiepanel-item">
 				<h3><?php _e( 'Below Header Banner Area', 'tie' ) ?></h3>
 				<?php
-					tie_options(				
+					tie_options(
 						array(	"name"	=> __( 'Below Header Banner', 'tie' ),
 								"id"	=> "banner_below_header",
-								"type"	=> "checkbox")); 
+								"type"	=> "checkbox"));
 				?>
 				<div class="tie-accordion">
 					<h4 class="accordion-head"><a href=""><?php _e( 'Image Ad', 'tie' ) ?></a></h4>
 					<div class="tie-accordion-contnet">
 				<?php
-					tie_options(			
+					tie_options(
 						array(	"name"	=> __( 'Bottom Banner Image', 'tie' ),
 								"id"	=> "banner_below_header_img",
-								"type"	=> "upload")); 
-								
-					tie_options(					
+								"type"	=> "upload"));
+
+					tie_options(
 						array(	"name"	=> __( 'Bottom Banner Link', 'tie' ),
 								"id"	=> "banner_below_header_url",
-								"type"	=> "text")); 
-								
-					tie_options(				
+								"type"	=> "text"));
+
+					tie_options(
 						array(	"name"	=> __( 'Alternative Text For The image', 'tie' ),
 								"id"	=> "banner_below_header_alt",
 								"type"	=> "text"));
-								
+
 					tie_options(
 						array(	"name"	=> __( 'Open The Link In a new Tab', 'tie' ),
 								"id"	=> "banner_below_header_tab",
 								"type"	=> "checkbox"));
-						
+
 					tie_options(
 						array(	"name"	=> __( 'Nofollow', 'tie' ),
 								"id"	=> "banner_below_header_nofollow",
@@ -1610,22 +1636,22 @@ $save='
 					<h4 class="accordion-head"><a href=""><?php _e( 'Responsive Google AdSense', 'tie' ) ?></a></h4>
 					<div class="tie-accordion-contnet">
 				<?php
-					tie_options(					
+					tie_options(
 						array(	"name"	=> __( 'Publisher ID', 'tie' ),
 								"id"	=> "bbanner_below_header_publisher",
 								"type"	=> "text"));
 
-					tie_options(					
+					tie_options(
 						array(	"name"	=> __( '728x90 (Leaderboard) - ad ID', 'tie' ),
 								"id"	=> "banner_below_header_728",
 								"type"	=> "text"));
-								
-					tie_options(					
+
+					tie_options(
 						array(	"name"	=> __( '468x60 (Banner) - ad ID', 'tie' ),
 								"id"	=> "banner_below_header_468",
 								"type"	=> "text"));
-								
-					tie_options(					
+
+					tie_options(
 						array(	"name"	=> __( '300x250 (Medium Rectangle) - ad ID', 'tie' ),
 								"id"	=> "banner_below_header_300",
 								"type"	=> "text"));
@@ -1635,49 +1661,49 @@ $save='
 					<h4 class="accordion-head"><a href=""><?php _e( 'Custom Code', 'tie' ) ?></a></h4>
 					<div class="tie-accordion-contnet">
 				<?php
-					tie_options(					
+					tie_options(
 						array(	"name"			=> __( 'Custom Ad Code', 'tie' ),
 								"id"			=> "banner_below_header_adsense",
 								"extra_text"	=> __( 'Supports: Text, HTML and Shortcodes.', 'tie' ),
-								"type"			=> "textarea")); 
+								"type"			=> "textarea"));
 				?>
 					</div>
 				</div>
 			</div>
-	
-	
+
+
 			<div class="tiepanel-item">
 				<h3><?php _e( 'Above Article Banner Area', 'tie' ) ?></h3>
 				<?php
-					tie_options(				
+					tie_options(
 						array(	"name"	=> __( 'Above Article Banner', 'tie' ),
 								"id"	=> "banner_above",
-								"type"	=> "checkbox")); 	
+								"type"	=> "checkbox"));
 				?>
 				<div class="tie-accordion">
 					<h4 class="accordion-head"><a href=""><?php _e( 'Image Ad', 'tie' ) ?></a></h4>
 					<div class="tie-accordion-contnet">
 				<?php
-					tie_options(			
+					tie_options(
 						array(	"name"	=> __( 'Above Article Banner Image', 'tie' ),
 								"id"	=> "banner_above_img",
-								"type"	=> "upload")); 
-								
-					tie_options(					
+								"type"	=> "upload"));
+
+					tie_options(
 						array(	"name"	=> __( 'Above Article Banner Link', 'tie' ),
 								"id"	=> "banner_above_url",
-								"type"	=> "text")); 
-								
-					tie_options(				
+								"type"	=> "text"));
+
+					tie_options(
 						array(	"name"	=> __( 'Alternative Text For The image', 'tie' ),
 								"id"	=> "banner_above_alt",
 								"type"	=> "text"));
-								
+
 					tie_options(
 						array(	"name"	=> __( 'Open The Link In a new Tab', 'tie' ),
 								"id"	=> "banner_above_tab",
 								"type"	=> "checkbox"));
-					
+
 					tie_options(
 						array(	"name"	=> __( 'Nofollow', 'tie' ),
 								"id"	=> "banner_above_nofollow",
@@ -1687,17 +1713,17 @@ $save='
 					<h4 class="accordion-head"><a href=""><?php _e( 'Responsive Google AdSense', 'tie' ) ?></a></h4>
 					<div class="tie-accordion-contnet">
 				<?php
-					tie_options(					
+					tie_options(
 						array(	"name"	=> __( 'Publisher ID', 'tie' ),
 								"id"	=> "banner_above_publisher",
 								"type"	=> "text"));
-	
-					tie_options(					
+
+					tie_options(
 						array(	"name"	=> __( '468x60 (Banner) - ad ID', 'tie' ),
 								"id"	=> "banner_above_468",
 								"type"	=> "text"));
-								
-					tie_options(					
+
+					tie_options(
 						array(	"name"	=> __( '300x250 (Medium Rectangle) - ad ID', 'tie' ),
 								"id"	=> "banner_above_300",
 								"type"	=> "text"));
@@ -1707,49 +1733,49 @@ $save='
 					<h4 class="accordion-head"><a href=""><?php _e( 'Custom Code', 'tie' ) ?></a></h4>
 					<div class="tie-accordion-contnet">
 				<?php
-					tie_options(					
+					tie_options(
 						array(	"name"			=> __( 'Custom Ad Code', 'tie' ),
 								"id"			=> "banner_above_adsense",
 								"extra_text"	=> __( 'Supports: Text, HTML and Shortcodes.', 'tie' ),
-								"type"			=> "textarea")); 
+								"type"			=> "textarea"));
 				?>
 					</div>
 				</div>
 			</div>
-	
-			
+
+
 			<div class="tiepanel-item">
 				<h3><?php _e( 'Below Article Banner Area', 'tie' ) ?></h3>
 				<?php
-					tie_options(				
+					tie_options(
 						array(	"name"	=> __( 'Below Article Banner', 'tie' ),
 								"id"	=> "banner_below",
-								"type"	=> "checkbox")); 	
+								"type"	=> "checkbox"));
 				?>
 				<div class="tie-accordion">
 					<h4 class="accordion-head"><a href=""><?php _e( 'Image Ad', 'tie' ) ?></a></h4>
 					<div class="tie-accordion-contnet">
 				<?php
-					tie_options(			
+					tie_options(
 						array(	"name"	=> __( 'Below Article Banner Image', 'tie' ),
 								"id"	=> "banner_below_img",
-								"type"	=> "upload")); 
-								
-					tie_options(					
+								"type"	=> "upload"));
+
+					tie_options(
 						array(	"name"	=> __( 'Below Article Banner Link', 'tie' ),
 								"id"	=> "banner_below_url",
-								"type"	=> "text")); 
-								
-					tie_options(				
+								"type"	=> "text"));
+
+					tie_options(
 						array(	"name"	=> __( 'Alternative Text For The image', 'tie' ),
 								"id"	=> "banner_below_alt",
 								"type"	=> "text"));
-								
+
 					tie_options(
 						array(	"name"	=> __( 'Open The Link In a new Tab', 'tie' ),
 								"id"	=> "banner_below_tab",
 								"type"	=> "checkbox"));
-							
+
 					tie_options(
 						array(	"name"	=> __( 'Nofollow', 'tie' ),
 								"id"	=> "banner_below_nofollow",
@@ -1759,17 +1785,17 @@ $save='
 					<h4 class="accordion-head"><a href=""><?php _e( 'Responsive Google AdSense', 'tie' ) ?></a></h4>
 					<div class="tie-accordion-contnet">
 				<?php
-					tie_options(					
+					tie_options(
 						array(	"name"	=> __( 'Publisher ID', 'tie' ),
 								"id"	=> "banner_below_publisher",
 								"type"	=> "text"));
-	
-					tie_options(					
+
+					tie_options(
 						array(	"name"	=> __( '468x60 (Banner) - ad ID', 'tie' ),
 								"id"	=> "banner_below_468",
 								"type"	=> "text"));
-								
-					tie_options(					
+
+					tie_options(
 						array(	"name"	=> __( '300x250 (Medium Rectangle) - ad ID', 'tie' ),
 								"id"	=> "banner_below_300",
 								"type"	=> "text"));
@@ -1779,11 +1805,11 @@ $save='
 					<h4 class="accordion-head"><a href=""><?php _e( 'Custom Code', 'tie' ) ?></a></h4>
 					<div class="tie-accordion-contnet">
 				<?php
-					tie_options(					
+					tie_options(
 						array(	"name"			=> __( 'Custom Ad Code', 'tie' ),
 								"id"			=> "banner_below_adsense",
 								"extra_text"	=> __( 'Supports: Text, HTML and Shortcodes.', 'tie' ),
-								"type"			=> "textarea")); 
+								"type"			=> "textarea"));
 				?>
 					</div>
 				</div>
@@ -1792,24 +1818,24 @@ $save='
 			<div class="tiepanel-item">
 				<h3><?php _e( 'Shortcode ADS', 'tie' ) ?></h3>
 				<?php
-					tie_options(				
+					tie_options(
 						array(	"name"	=> __( '[ads1] Shortcode Banner', 'tie' ),
 								"id"	=> "ads1_shortcode",
-								"type"	=> "textarea")); 
-	
+								"type"	=> "textarea"));
+
 					tie_options(
 						array(	"name"	=> __( '[ads2] Shortcode Banner', 'tie' ),
 								"id"	=> "ads2_shortcode",
-								"type"	=> "textarea")); 
+								"type"	=> "textarea"));
 				?>
 			</div>
 		</div> <!-- Banners Settings -->
-		
-			
+
+
 
 		<div id="tab11" class="tab_content tabs-wrap">
-			<h2><?php _e( 'Sidebars', 'tie' ) ?></h2>	<?php echo $save ?>	
-			
+			<h2><?php _e( 'Sidebars', 'tie' ) ?></h2>	<?php echo $save ?>
+
 			<div class="tiepanel-item">
 				<h3><?php _e( 'Default Sidebar Position', 'tie' ) ?></h3>
 				<div class="option-item">
@@ -1828,7 +1854,7 @@ $save='
 					</ul>
 				</div>
 			</div>
-			
+
 			<div class="tiepanel-item">
 				<h3><?php _e( 'Sticky Sidebars', 'tie' ) ?></h3>
 				<?php
@@ -1836,44 +1862,44 @@ $save='
 						array(	"name"	=> __( 'Sticky Sidebar', 'tie' ),
 								"id"	=> "sticky_sidebar",
 								"type"	=> "checkbox"));
-								
+
 					tie_options(
 						array(	"name"	=> __( 'Disable on the homepage', 'tie' ),
 								"id"	=> "sticky_sidebar_disable_homepage",
 								"type"	=> "checkbox"));
-								
+
 					tie_options(
 						array(	"name"	=> __( 'Disable on category pages', 'tie' ),
 								"id"	=> "sticky_sidebar_disable_cat",
-								"type"	=> "checkbox"));	
-								
+								"type"	=> "checkbox"));
+
 					tie_options(
 						array(	"name"	=> __( 'Disable on tag pages', 'tie' ),
 								"id"	=> "sticky_sidebar_disable_tag",
-								"type"	=> "checkbox"));	
-								
+								"type"	=> "checkbox"));
+
 					tie_options(
 						array(	"name"	=> __( 'Disable on pages', 'tie' ),
 								"id"	=> "sticky_sidebar_disable_pages",
-								"type"	=> "checkbox"));	
-								
+								"type"	=> "checkbox"));
+
 					tie_options(
 						array(	"name"	=> __( 'Disable on posts', 'tie' ),
 								"id"	=> "sticky_sidebar_disable_posts",
 								"type"	=> "checkbox"));
-													
-								
+
+
 				?>
 			</div>
-			
+
 			<div class="tiepanel-item">
 				<h3><?php _e( 'Add Sidebar', 'tie' ) ?></h3>
 				<div class="option-item">
 					<span class="label"><?php _e( 'Sidebar Name', 'tie' ) ?></span>
-					
+
 					<input id="sidebarName" type="text" size="56" style="direction:ltr; text-laign:left" name="sidebarName" value="" />
 					<input id="sidebarAdd"  class="button" type="button" value="<?php _e( 'Add', 'tie' ) ?>" />
-					
+
 					<ul id="sidebarsList">
 					<?php $sidebars = tie_get_option( 'sidebars' ) ;
 						if($sidebars){
@@ -1885,13 +1911,13 @@ $save='
 						}
 					?>
 					</ul>
-				</div>				
+				</div>
 			</div>
 
 			<div class="tiepanel-item" id="custom-sidebars">
 				<h3><?php _e( 'Custom Sidebars', 'tie' ) ?></h3>
 				<?php
-				
+
 				$new_sidebars = array(''=> __( 'Default' , 'tie' ));
 				if (class_exists('Woocommerce'))
 					$new_sidebars ['shop-widget-area'] = __( 'Shop - For WooCommerce Pages', 'tie' ) ;
@@ -1901,97 +1927,97 @@ $save='
 						$new_sidebars[$sidebar] = $sidebar;
 					}
 				}
-				
-				
-				tie_options(				
+
+
+				tie_options(
 					array(	"name"		=> __( 'Home Sidebar', 'tie' ),
 							"id"		=> "sidebar_home",
 							"type"		=> "select",
 							"options"	=> $new_sidebars ));
-							
-				tie_options(				
+
+				tie_options(
 					array(	"name"		=> __( 'Single Page Sidebar', 'tie' ),
 							"id"		=> "sidebar_page",
 							"type"		=> "select",
 							"options"	=> $new_sidebars ));
-							
-				tie_options(				
+
+				tie_options(
 					array(	"name"		=> __( 'Single Article Sidebar', 'tie' ),
 							"id"		=> "sidebar_post",
 							"type"		=> "select",
 							"options"	=> $new_sidebars ));
-							
-				tie_options(				
+
+				tie_options(
 					array(	"name"		=> __( 'Archives Sidebar', 'tie' ),
 							"id"		=> "sidebar_archive",
 							"type"		=> "select",
 							"options"	=> $new_sidebars ));
 
 				if(class_exists( 'bbPress' ))
-				tie_options(				
+				tie_options(
 					array(	"name"		=> __( 'bbPress Sidebar', 'tie' ),
 							"id"		=> "sidebar_bbpress",
 							"type"		=> "select",
-							"options"	=> $new_sidebars )); 
+							"options"	=> $new_sidebars ));
 
 				?>
 			</div>
 		</div> <!-- Sidebars -->
-		
-		
+
+
 		<div id="tab12" class="tab_content tabs-wrap">
-			<h2><?php _e( 'Archives Settings', 'tie' ) ?></h2>	<?php echo $save ?>	
-			
-			
+			<h2><?php _e( 'Archives Settings', 'tie' ) ?></h2>	<?php echo $save ?>
+
+
 			<div class="tiepanel-item">
 				<h3><?php _e( 'General Settings', 'tie' ) ?></h3>
 				<?php
-								
+
 					tie_options(
 						array(	"name"	=> __( 'Show Social Buttons', 'tie' ),
 								"id"	=> "archives_socail",
 								"type"	=> "checkbox" ));
-					
+
 					tie_options(
 						array( 	"name"	=> __( 'Excerpt Length', 'tie' ),
 								"id"	=> "exc_length",
 								"type"	=> "short-text"));
-								
+
 					tie_options(
 						array(	"name"	=> __( 'Review Score', 'tie' ),
 								"id"	=> "arc_meta_score",
-								"type"	=> "checkbox" )); 	
-								
+								"type"	=> "checkbox" ));
+
 					tie_options(
 						array(	"name"	=> __( 'Author Meta', 'tie' ),
 								"id"	=> "arc_meta_author",
-								"type"	=> "checkbox")); 
-								
+								"type"	=> "checkbox"));
+
 					tie_options(
 						array(	"name"	=> __( 'Date Meta', 'tie' ),
 								"id"	=> "arc_meta_date",
 								"type"	=> "checkbox"));
-								
+
 					tie_options(
 						array(	"name"	=> __( 'Categories Meta', 'tie' ),
 								"id"	=> "arc_meta_cats",
-								"type"	=> "checkbox")); 
-								
+								"type"	=> "checkbox"));
+
 					tie_options(
 						array(	"name"	=> __( 'Comments Meta', 'tie' ),
 								"id"	=> "arc_meta_comments",
 								"type"	=> "checkbox"));
-								
+
 					tie_options(
 						array(	"name"	=> __( 'Views Meta', 'tie' ),
 								"id"	=> "arc_meta_views",
 								"type"	=> "checkbox"));
 				?>
-			</div>	
-			
+			</div>
+
 			<div class="tiepanel-item">
 				<h3><?php _e( 'Default layout settings', 'tie' ) ?></h3>
-				
+
 				<?php
 					$tie_blog_display = tie_get_option('blog_display');
 				?>
@@ -2023,7 +2049,7 @@ $save='
 				</div>
 			</div>
 
-			
+
 			<div class="tiepanel-item">
 				<h3><?php _e( 'Category Page Settings', 'tie' ) ?></h3>
 				<?php
@@ -2074,7 +2100,7 @@ $save='
 						array(	"name"	=> __( 'Tag Description', 'tie' ),
 								"id"	=> "tag_desc",
 								"type"	=> "checkbox"));
-								
+
 					tie_options(
 						array(	"name"	=> __( 'RSS Icon', 'tie' ),
 								"id"	=> "tag_rss",
@@ -2109,7 +2135,7 @@ $save='
 					</ul>
 				</div>
 			</div>
-			
+
 			<div class="tiepanel-item">
 				<h3><?php _e( 'Author Page Settings', 'tie' ) ?></h3>
 				<?php
@@ -2151,7 +2177,7 @@ $save='
 					</ul>
 				</div>
 			</div>
-			
+
 			<div class="tiepanel-item">
 				<h3><?php _e( 'Search Page Settings', 'tie' ) ?></h3>
 				<?php
@@ -2160,7 +2186,7 @@ $save='
 								"id"	=> "search_cats",
 								"help" => __( 'Use minus sign (-) to exclude categories. Example: (1,4,-7) = search only in Category 1 & 4, and exclude Category 7.', 'tie' ),
 								"type"	=> "text"));
-	
+
 					tie_options(
 						array(	"name"	=> __( 'Exclude Pages in results', 'tie' ),
 								"id"	=> "search_exclude_pages",
@@ -2195,16 +2221,16 @@ $save='
 				</div>
 			</div>
 		</div> <!-- Archives -->
-				
-				
+
+
 		<div id="tab13" class="tab_content tabs-wrap">
-			<h2><?php _e( 'Styling', 'tie' ) ?></h2>	<?php echo $save ?>	
+			<h2><?php _e( 'Styling', 'tie' ) ?></h2>	<?php echo $save ?>
 			<div class="tiepanel-item">
 				<h3><?php _e( 'Theme Color and Settings', 'tie' ) ?></h3>
 
 				<div class="option-item">
 					<span class="label"><?php _e( 'Choose Theme Color', 'tie' ) ?></span>
-			
+
 					<?php
 						$theme_color = tie_get_option('theme_skin');
 					?>
@@ -2250,28 +2276,28 @@ $save='
 								"id"	=> "global_color",
 								"type"	=> "color"));
 
-					tie_options(				
+					tie_options(
 						array(	"name"	=> __( 'Dark Skin', 'tie' ),
 								"id"	=> "dark_skin",
-								"type"	=> "checkbox")); 
-								
-					tie_options(				
+								"type"	=> "checkbox"));
+
+					tie_options(
 						array(	"name"			=> __( 'Modern Colored Scrollbar', 'tie' ),
 								"id"			=> "modern_scrollbar",
 								"type"			=> "checkbox",
 								"extra_text"	=> __( 'For Chrome and Safari only.', 'tie' ) ));
-						
+
 					tie_options(
 						array(	"name"	=> __( 'Apply Categories Colors on News blocks', 'tie' ),
 								"id"	=> "homepage_cats_colors",
-								"type"	=> "checkbox")); 
-							
-					tie_options(				
+								"type"	=> "checkbox"));
+
+					tie_options(
 						array(	"name"	=> __( 'Lazy Load For Images', 'tie' ),
 								"id"	=> "lazy_load",
 								"type"	=> "checkbox" ));
 				?>
-			</div>	
+			</div>
 			<div class="tiepanel-item">
 
 				<h3><?php _e( 'Background Type', 'tie' ) ?></h3>
@@ -2287,7 +2313,7 @@ $save='
 
 			<div class="tiepanel-item" id="pattern-settings">
 				<h3><?php _e( 'Choose Pattern', 'tie' ) ?></h3>
-				
+
 				<?php
 					tie_options(
 						array( 	"name"	=> __( 'Background Color', 'tie' ),
@@ -2297,7 +2323,7 @@ $save='
 					$theme_pattern = tie_get_option('background_pattern');
 				?>
 				<ul id="theme-pattern" class="tie-options">
-					<?php for($i=1 ; $i<=46 ; $i++ ){ 
+					<?php for($i=1 ; $i<=46 ; $i++ ){
 					 $pattern = 'body-bg'.$i; ?>
 					<li>
 						<input id="tie_background_pattern"  name="tie_options[background_pattern]" type="radio" value="<?php echo $pattern ?>" <?php if($theme_pattern == $pattern ) echo $checked; ?> />
@@ -2321,16 +2347,16 @@ $save='
 								"type"	=> "checkbox"));
 				?>
 
-			</div>	
+			</div>
 			<div class="tiepanel-item">
 				<h3><?php _e( 'Body Styling', 'tie' ) ?></h3>
 				<?php
-				
+
 					tie_options(
 						array(	"name"	=> __( 'Highlighted Text Color', 'tie' ),
 								"id"	=> "highlighted_color",
 								"type"	=> "color"));
-								
+
 					tie_options(
 						array(	"name"	=> __( 'Links Color', 'tie' ),
 								"id"	=> "links_color",
@@ -2349,7 +2375,7 @@ $save='
 						array(	"name"	=> __( 'Links Color on mouse over', 'tie' ),
 								"id"	=> "links_color_hover",
 								"type"	=> "color"));
-	
+
 					tie_options(
 						array(	"name"		=> __( 'Links Decoration on mouse over', 'tie' ),
 								"id"		=> "links_decoration_hover",
@@ -2386,7 +2412,7 @@ $save='
 								"type"	=> "color"));
 				?>
 			</div>
-			
+
 			<div class="tiepanel-item">
 				<h3><?php _e( 'Header Background', 'tie' ) ?></h3>
 				<?php
@@ -2396,8 +2422,8 @@ $save='
 								"type"	=> "background"));
 				?>
 			</div>
-			
-						
+
+
 			<div class="tiepanel-item">
 				<h3><?php _e( 'Main Navigation Styling', 'tie' ) ?></h3>
 				<?php
@@ -2405,12 +2431,12 @@ $save='
 						array(	"name"	=> __( 'Main Navigation Background', 'tie' ),
 								"id"	=> "main_nav_background",
 								"type"	=> "color"));
-								
+
 					tie_options(
 						array(	"name"	=> __( 'Main Navigation inner bottom border color', 'tie' ),
 								"id"	=> "main_nav_border",
 								"type"	=> "color"));
-								
+
 					tie_options(
 						array(	"name"	=> __( 'Sub Menu Background', 'tie' ),
 								"id"	=> "sub_nav_background",
@@ -2420,30 +2446,30 @@ $save='
 						array(	"name"	=> __( 'Links Color', 'tie' ),
 								"id"	=> "nav_links_color",
 								"type"	=> "color"));
-								
+
 					tie_options(
 						array(	"name"	=> __( 'Links Color on mouse over', 'tie' ),
 								"id"	=> "nav_links_color_hover",
 								"type"	=> "color"));
-								
+
 					tie_options(
 						array(	"name"	=> __( 'Current Item Link Color', 'tie' ),
 								"id"	=> "nav_current_links_color",
 								"type"	=> "color"));
-										
+
 					tie_options(
 						array(	"name"	=> __( 'Separator Line1 color', 'tie' ),
 								"id"	=> "nav_sep1",
 								"type"	=> "color"));
-								
+
 					tie_options(
 						array(	"name"	=> __( 'Separator Line2 color', 'tie' ),
 								"id"	=> "nav_sep2",
 								"type"	=> "color"));
 				?>
 			</div>
-			
-			
+
+
 			<div class="tiepanel-item">
 				<h3><?php _e( 'Breaking News Styling', 'tie' ) ?></h3>
 				<?php
@@ -2451,7 +2477,7 @@ $save='
 						array(	"name"	=> __( 'Breaking News Text Background', 'tie' ),
 								"id"	=> "breaking_title_bg",
 								"type"	=> "color"));
-				?>		
+				?>
 			</div>
 
 			<div class="tiepanel-item">
@@ -2467,7 +2493,7 @@ $save='
 								"id"	=> "boxes_bg",
 								"type"	=> "background"));
 
-				?>		
+				?>
 			</div>
 			<div class="tiepanel-item">
 				<h3><?php _e( 'Post Styling', 'tie' ) ?></h3>
@@ -2526,14 +2552,14 @@ $save='
 								"id"	=> "footer_links_color_hover",
 								"type"	=> "color"));
 				?>
-			</div>				
-						
+			</div>
+
 			<div class="tiepanel-item">
-				<h3><?php _e( 'Custom CSS', 'tie' ) ?></h3>	
+				<h3><?php _e( 'Custom CSS', 'tie' ) ?></h3>
 				<div class="option-item">
 					<p><strong><?php _e( 'Global CSS :', 'tie' ) ?></strong></p>
 					<textarea id="tie_css" name="tie_options[css]" class="code tie-css" style="width:100%" rows="7"><?php echo tie_get_option('css');  ?></textarea>
-				</div>	
+				</div>
 				<div class="option-item">
 					<p><strong><?php _e( 'Tablets:', 'tie' ) ?></strong><?php _e( '768 - 985px', 'tie' ) ?> </p>
 					<textarea id="tie_css_tablets" name="tie_options[css_tablets]" class="code tie-css"  style="width:100%" rows="7"><?php echo tie_get_option('css_tablets');  ?></textarea>
@@ -2545,16 +2571,16 @@ $save='
 				<div class="option-item">
 					<p><strong><?php _e( 'Phones:', 'tie' ) ?></strong><?php _e( '320 - 479px', 'tie' ) ?></p>
 					<textarea id="tie_css_phones" name="tie_options[css_phones]" class="code tie-css"  style="width:100%" rows="7"><?php echo tie_get_option('css_phones');  ?></textarea>
-				</div>	
-			</div>	
+				</div>
+			</div>
 
 		</div> <!-- Styling -->
 
-	
-		
+
+
 		<div id="tab14" class="tab_content tabs-wrap">
-			<h2><?php _e( 'Typography', 'tie' ) ?></h2>	<?php echo $save ?>	
-			
+			<h2><?php _e( 'Typography', 'tie' ) ?></h2>	<?php echo $save ?>
+
 			<div class="tiepanel-item">
 				<h3><?php _e( 'Character sets', 'tie' ) ?></h3>
 				<p class="tie_message_hint"><strong><?php _e( 'Tip:', 'tie' ) ?></strong><?php _e( "If you choose only the languages that you need, you'll help prevent slowness on your webpage.", 'tie' ) ?></p>
@@ -2573,29 +2599,29 @@ $save='
 						array(	"name"	=> __( 'Cyrillic Extended', 'tie' ),
 								"id"	=> "typography_cyrillic_extended",
 								"type"	=> "checkbox"));
-								
+
 					tie_options(
 						array(	"name"	=> __( 'Greek', 'tie' ),
 								"id"	=> "typography_greek",
 								"type"	=> "checkbox"));
-								
+
 					tie_options(
 						array(	"name"	=> __( 'Greek Extended', 'tie' ),
 								"id"	=> "typography_greek_extended",
-								"type"	=> "checkbox"));	
-								
+								"type"	=> "checkbox"));
+
 					tie_options(
 						array(	"name"	=> __( 'Khmer', 'tie' ),
 								"id"	=> "typography_khmer",
-								"type"	=> "checkbox"));		
-								
+								"type"	=> "checkbox"));
+
 					tie_options(
 						array(	"name"	=> __( 'Vietnamese', 'tie' ),
 								"id"	=> "typography_vietnamese",
 								"type"	=> "checkbox"));
 				?>
 			</div>
-			
+
 			<div class="tiepanel-item">
 				<h3><?php _e( 'Live typography preview', 'tie' ) ?></h3>
 					<?php
@@ -2604,8 +2630,8 @@ $save='
 								"id"	=> "typography_test",
 								"type"	=> "typography"));
 					?>
-	
-				<div id="font-preview" class="option-item"><?php _e( 'Grumpy wizards make toxic brew for the evil Queen and Jack.', 'tie' ) ?></div>		
+
+				<div id="font-preview" class="option-item"><?php _e( 'Grumpy wizards make toxic brew for the evil Queen and Jack.', 'tie' ) ?></div>
 
 			</div>
 			<div class="tiepanel-item">
@@ -2615,17 +2641,17 @@ $save='
 						array( 	"name"	=> __( 'General Typography', 'tie' ),
 								"id"	=> "typography_general",
 								"type"	=> "typography"));
-								
+
 					tie_options(
 						array( 	"name"	=> __( 'Site Title In Header', 'tie' ),
 								"id"	=> "typography_site_title",
-								"type"	=> "typography"));	
+								"type"	=> "typography"));
 
 					tie_options(
 						array( 	"name"	=> __( 'Tagline In Header', 'tie' ),
 								"id"	=> "typography_tagline",
-								"type"	=> "typography"));	
-								
+								"type"	=> "typography"));
+
 					tie_options(
 						array( 	"name"	=> __( 'Top Menu', 'tie' ),
 								"id"	=> "typography_top_menu",
@@ -2650,12 +2676,12 @@ $save='
 						array( 	"name"	=> __( 'Single Post Title', 'tie' ),
 								"id"	=> "typography_post_title",
 								"type"	=> "typography"));
-								
+
 					tie_options(
 						array( 	"name"	=> __( 'Post Title in Homepage Blocks and Post Titles in Blog Layout', 'tie' ),
 								"id"	=> "typography_post_title_boxes",
 								"type"	=> "typography"));
-								
+
 					tie_options(
 						array( 	"name"	=> __( 'Small Post Title in Homepage Blocks', 'tie' ),
 								"id"	=> "typography_post_title2_boxes",
@@ -2670,7 +2696,7 @@ $save='
 						array( 	"name"	=> __( 'Post Entry', 'tie' ),
 								"id"	=> "typography_post_entry",
 								"type"	=> "typography"));
-								
+
 					tie_options(
 						array( 	"name"	=> __( 'Blockquotes', 'tie' ),
 								"id"	=> "typography_blockquotes",
@@ -2680,24 +2706,24 @@ $save='
 						array( 	"name"	=> __( 'Blocks Titles', 'tie' ),
 								"id"	=> "typography_boxes_title",
 								"type"	=> "typography"));
-								
+
 					tie_options(
 						array( 	"name"	=> __( 'Widgets Titles', 'tie' ),
 								"id"	=> "typography_widgets_title",
 								"type"	=> "typography"));
-								
+
 					tie_options(
 						array( 	"name"	=> __( 'Footer Widgets Titles', 'tie' ),
 								"id"	=> "typography_footer_widgets_title",
 								"type"	=> "typography"));
 				?>
-			</div>			
+			</div>
 		</div> <!-- Typography -->
-		
-		
+
+
 		<div id="tab20" class="tab_content tabs-wrap">
-			<h2><?php _e( 'Translations', 'tie' ) ?></h2>	<?php echo $save ?>	
-			
+			<h2><?php _e( 'Translations', 'tie' ) ?></h2>	<?php echo $save ?>
+
 			<div>
 			<?php
 				global $tie_defailt_texts;
@@ -2717,10 +2743,10 @@ $save='
 				?>
 			</div> <!--tie-panel-item -->
 		</div> <!-- Translations -->
-		
-		
+
+
 		<div id="tab10" class="tab_content tabs-wrap">
-			<h2><?php _e( 'Advanced Settings', 'tie' ) ?></h2>	<?php echo $save ?>	
+			<h2><?php _e( 'Advanced Settings', 'tie' ) ?></h2>	<?php echo $save ?>
 
 			<div class="tiepanel-item">
 				<h3><?php _e( 'Advanced Settings', 'tie' ) ?></h3>
@@ -2729,12 +2755,12 @@ $save='
 						array(	"name"	=> __( 'Disable Arqam Lite', 'tie' ),
 								"id"	=> "disable_arqam_lite",
 								"type"	=> "checkbox"));
-					
+
 					tie_options(
 						array(	"name"	=> __( 'Notify on theme updates', 'tie' ),
 								"id"	=> "notify_theme",
 								"type"	=> "checkbox"));
-								
+
 					tie_options(
 						array(	"name"	=> __( 'Disable the Responsiveness', 'tie' ),
 								"id"	=> "disable_responsive",
@@ -2757,18 +2783,18 @@ $save='
 								"id"	=> "dashboard_logo_url",
 								"type"	=> "text"));
 				?>
-			
+
 			</div>
 			<?php
 				global $array_options ;
-				
+
 				$current_options = array();
 				foreach( $array_options as $option ){
 					if( get_option( $option ) )
 						$current_options[$option] =  get_option( $option ) ;
 				}
 			?>
-			
+
 			<div class="tiepanel-item">
 				<h3><?php _e( 'Export', 'tie' ) ?></h3>
 				<div class="option-item">
@@ -2784,8 +2810,8 @@ $save='
 
 
 		</div> <!-- Advanced -->
-		
-		
+
+
 		<div class="mo-footer">
 			<?php echo $save; ?>
 		</form>
@@ -2802,6 +2828,6 @@ $save='
 	</div><!-- .mo-panel-content -->
 	<div class="clear"></div>
 </div><!-- .mo-panel -->
-<?php 
+<?php
 }
 ?>

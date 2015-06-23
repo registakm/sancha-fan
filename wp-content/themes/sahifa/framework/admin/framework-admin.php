@@ -386,6 +386,12 @@ $default_data = Array(
 		'share_pinterest' 			=> 		true,
 		'share_hatena' 				=> 		true,
 		'share_line' 				=> 		true,
+
+		"tie_custom_share_button"	=> 		true,
+		"tie_custom_share_T"		=> 		true,
+		"tie_custom_share_F"		=> 		true,
+		"tie_custom_share_L"		=> 		true,
+
 		
 		'related' 					=> 		true,
 		'related_number' 			=> 		'3',
