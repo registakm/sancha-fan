@@ -154,6 +154,9 @@ function tie_author_box($avatar = true, $social = true, $name = false , $user_id
 		<?php echo get_avatar( get_the_author_meta( 'user_email' , $user_id ), 90 ); ?>
 	</div><!-- #author-avatar -->
 	<?php endif; ?>
+		<div class="author-name">
+			<?php the_author() ?>
+		</div><!-- #author-description -->
 		<div class="author-description">
 			<?php if( !empty( $name ) ): ?>
 			<h3><a href="<?php echo get_author_posts_url( $user_id ); ?>"><?php echo $name ?> </a></h3>

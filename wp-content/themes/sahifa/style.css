@@ -3435,7 +3435,7 @@ blockquote p {
 #respond h3 {
     float: left;
     margin-right: 10px;
-    font-size: 22px;
+    font-size: 17px;
     font-family: 'Noto Sans Japanese', 'Hiragino Kaku Gothic ProN', arial, sans-serif;
 }
 
@@ -4063,6 +4063,9 @@ footer #wp-calendar caption {
 
 #author-box .author-avatar img {
     margin-right: 20px;
+}
+.author-name {
+    font-weight: bold;
 }
 
 .author-description {

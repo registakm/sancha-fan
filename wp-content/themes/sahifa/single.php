@@ -93,7 +93,7 @@
 		<?php if( ( tie_get_option( 'post_authorbio' ) && empty( $get_meta["tie_hide_author"][0] ) ) || ( isset( $get_meta["tie_hide_related"][0] ) && $get_meta["tie_hide_author"][0] == 'no' ) ): ?>		
 		<section id="author-box">
 			<div class="block-head">
-				<h3><?php _eti( 'About' ) ?> <?php the_author() ?> </h3><div class="stripe-line"></div>
+				<h3 class="author-title"><?php _eti( 'この記事を書いた人' ) ?></h3><div class="stripe-line"></div>
 			</div>
 			<div class="post-listing">
 				<?php tie_author_box() ?>
