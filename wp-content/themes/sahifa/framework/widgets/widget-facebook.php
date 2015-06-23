@@ -42,12 +42,7 @@ class tie_facebook_widget extends WP_Widget {
 				}(window, document, 'script'));
 				</script>
 
-			<?php if($this->number === 4): ?>
-				<div style="min-height:130px">
-				<div class="fb-page" data-href="<?php echo $page_url ?>" data-hide-cover="false" data-show-facepile="false" data-show-posts="false"><div class="fb-xfbml-parse-ignore"><blockquote cite="<?php echo $page_url ?>"><a href="<?php echo $page_url ?>" style="display:block;text-indent: 100%;overflow:hidden;white-space:nowrap">三軒茶屋をもっと好きになる！三茶ファン</a></blockquote></div></div></div>
-			<? else: ?>
 				<div class="fb-page" data-href="<?php echo $page_url ?>" data-height="370" data-hide-cover="false" data-show-facepile="false" data-show-posts="true"><div class="fb-xfbml-parse-ignore"><blockquote cite="<?php echo $page_url ?>"><a href="<?php echo $page_url ?>" style="display:block;text-indent: 100%;overflow:hidden;white-space:nowrap">三軒茶屋をもっと好きになる！三茶ファン</a></blockquote></div></div>
-			<?php endif; ?>
 	<?php 
 		echo $after_widget;
 	}
