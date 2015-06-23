@@ -81,6 +81,7 @@
 		</article><!-- .post-listing -->
 		<?php if( tie_get_option( 'post_tags' ) ) the_tags( '<p class="post-tag">'.__ti( 'Tags ' )  ,' ', '</p>'); ?>
 
+		<?php if( ( tie_get_option( 'facebook_post_like' )) ) get_template_part( 'framework/parts/custom_facebook_like_box' ); // Get Custoom Facebook Custom Like Box  ?>
 		
 		<?php //Below Post Banner
 		if( empty( $get_meta["tie_hide_below"][0] ) ){

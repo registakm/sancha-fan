@@ -3127,6 +3127,37 @@ p.post-meta span {
     border-radius: 2px;
 }
 
+/*custom share facebook like box*/
+.facebook-like-box {
+    margin-bottom: 40px;
+    border-bottom: 4px solid #FF9800;
+    box-shadow: 0 0 3px #CACACA;
+}
+.likebox-container{
+    display: table;
+    width: 100%;
+}
+.likebox-img {
+    display: table-cell;
+    background-size: cover;
+    width: 390px;
+    height: 150px;
+}
+.likebox-container-title {
+    font-size: 1.1em;
+}
+.likebox-container-btn {
+    padding: 20px 15px;
+    display: table-cell;
+    text-align: center;
+    vertical-align: middle;
+    line-height: 1.4;
+    min-width: 138px;
+}
+.likebox-button {
+    margin-top: 15px;
+    display: block;
+}
 /**
  * Post Elements
  * -----------------------------------------------------------------------------
