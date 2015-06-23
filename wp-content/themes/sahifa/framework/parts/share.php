@@ -24,13 +24,14 @@ $protocol = is_ssl() ? 'https' : 'http';
 	<?php endif; ?>
 	<?php if (tie_get_option( 'share_hatena' ) ): ?>
 		<li>
-		<a href="http://b.hatena.ne.jp/entry/panel/?url=<?php echo urlencode($post_link); ?>" class="social-hatena" data-hatena-bookmark-title="<?php the_title(); ?>" data-hatena-bookmark-layout="standard-noballoon" data-hatena-bookmark-lang="ja" rel="external" target="_blank" title="このエントリーをはてなブックマークに追加"><i class="fa fa-hatena"></i><span>はてブ</span></a>
+		<a href="http://b.hatena.ne.jp/entry/panel/?url=<?php echo urlencode($post_link); ?>" class="social-hatena" data-hatena-bookmark-title="<?php the_title(); ?>" data-hatena-bookmark-layout="standard-noballoon" data-hatena-bookmark-lang="ja" rel="external" target="_blank" title="このエントリーをはてなブックマークに追加"><i class="fa fa-hatena"></i><span><?php _eti( 'はてブ' );?></span></a>
 		</li>
 	<?php endif; ?>
 	<?php if (tie_get_option( 'share_line' ) && wp_is_mobile() ): ?>
 		<li>
-			<a href="http://line.me/R/msg/text/?<?php echo the_title(); ?>%0D%0A<?php echo $post_link; ?>" class="share-line">
-			<span>Line</span>
+			<a href="http://line.me/R/msg/text/?<?php echo the_title(); ?>%0D%0A<?php echo $post_link; ?>" class="share-line share-line-t">
+			<i class="fa fa-line"></i>
+			<span><?php _eti( 'Line' );?></span>
 			</a>
 		</li>
 	<?php endif; ?>

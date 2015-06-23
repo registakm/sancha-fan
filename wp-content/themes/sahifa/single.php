@@ -77,6 +77,7 @@
 				<?php if( ( tie_get_option( 'share_post' ) && empty( $get_meta["tie_hide_share"][0] ) ) || ( !empty( $get_meta["tie_hide_share"][0] ) && $get_meta["tie_hide_share"][0] == 'no' ) ) get_template_part( 'framework/parts/share' ); // Get Share Button template ?>
 				<div class="clear"></div>
 			</div><!-- .post-inner -->
+			<?php if( ( tie_get_option( 'custom_share_button' ) && empty( $get_meta["tie_hide_share"][0] ) ) || ( !empty( $get_meta["tie_hide_share"][0] ) && $get_meta["tie_hide_share"][0] == 'no' ) ) get_template_part( 'framework/parts/custom_share' ); // Get Custoom Share Button template ?>
 		</article><!-- .post-listing -->
 		<?php if( tie_get_option( 'post_tags' ) ) the_tags( '<p class="post-tag">'.__ti( 'Tags ' )  ,' ', '</p>'); ?>
 
